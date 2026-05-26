@@ -35,6 +35,44 @@ UI / UX / 产品界面设计任务默认 **Google Stitch first**，但不是“�
 - “生成 design.md / Stitch prompt / Stitch 风格规范”
 - “把 Stitch 结果转成前端实现 / Vue 页面 / Tailwind 组件”
 
+## 使用前置条件：是否必须安装 Stitch？
+
+结论：**不一定必须安装或接入 Stitch 才能使用本 skill**。本 skill 有两种运行方式：
+
+| 模式 | 是否需要 Stitch 账号/安装/接入 | 能交付什么 | 什么时候用 |
+|---|---:|---|---|
+| Prompt-only | 否 | Stitch-ready prompt、critique prompt、design.md 草案、Hallmark 质量检查清单 | 当前会话没有 Stitch MCP、用户只需要设计输入、团队手动把 prompt 复制到 Stitch |
+| Stitch-assisted | 是，至少需要可访问的 Google Stitch 产品入口；若要 agent 直接调用，还需要 MCP/API/浏览器接入 | 基于真实 Stitch 输出的复核、二次改版 prompt、design.md、前端实现任务 | 用户要求“真实跑 Stitch / 看 Stitch 结果 / 让 agent 连接 Stitch” |
+
+### 最小可用条件
+
+- Codex / agent 能读取本 skill 的 `SKILL.md` 和 `references/prompt-templates.md`。
+- 用户能提供以下任一输入：
+  - 新页面/新产品需求；
+  - 现有 UI 截图、URL、DOM、代码或页面描述；
+  - 已有 Stitch 输出；
+  - 需要前端落地的页面目标和项目约束。
+- 如果没有 Stitch 账号、MCP 或浏览器接入，本 skill 仍然可以输出**可复制到 Stitch 的 prompt**，但不能声称“已经真实调用 Stitch”。
+
+### 需要真实 Stitch 时再检查
+
+当用户明确要求真实使用 Stitch，而不是只要 prompt 时，先确认：
+
+1. **产品入口**：用户能打开当前可用的 Google Stitch 官方入口；不要把旧链接、第三方文章或搜索摘要当最新事实。
+2. **账号权限**：当前账号可新建设计或导入 prompt；如涉及团队/企业空间，确认不会污染他人项目。
+3. **接入方式**：
+   - 手动模式：把本 skill 输出的 prompt 复制到 Stitch。
+   - 浏览器模式：优先复用用户授权的浏览器；保护当前窗口和登录态。
+   - MCP/API 模式：先读本地 `StitchMCP` 或官方连接文档，检查 server、认证、headers、resources/templates。
+4. **验收口径**：真实 Stitch 输出必须再过 Hallmark checklist；好看不等于业务流程正确。
+
+### 不满足前置条件时的降级
+
+- 没有 Stitch 账号 / 产品入口不可访问：交付 prompt、设计规格和检查清单，标注“本轮未真实调用 Stitch”。
+- `list_mcp_resources` / `list_mcp_resource_templates` 为空：只说明当前会话没有暴露 MCP resources/templates，不说明 Stitch 产品不可用。
+- 没有截图或现有页面资料：先按用户文字需求做 v0.1 方向；不要编造真实业务数据、客户 logo、指标或 testimonial。
+- 没有项目 design system：使用明确的临时 token 命名，并把“待项目确认”写入 design.md。
+
 ## 默认决策树
 
 ```text
@@ -142,6 +180,106 @@ UI 任务
 - 必须保留的入口/按钮/数据字段
 - 已验证的业务流程和权限边界
 ```
+
+## 常见使用案例
+
+下面这些案例可以直接作为用户指令或内部任务模板。默认先输出 Stitch-ready prompt；只有用户明确要求并具备接入条件时，才真实调用 Stitch。
+
+### Case 1：内容运营 Dashboard 从零设计
+
+```text
+用 google-stitch-hallmark-ui-design 设计一个内容运营 dashboard。
+用户是编辑和运营，30 秒内要看清今日发布进度、待审核内容、异常任务和关键提醒。
+请输出可复制到 Stitch 的英文 prompt、页面结构、组件清单、状态设计和 design.md 草案。
+不要使用 hero + 3 cards 的模板结构，不要编造客户数或 SLA。
+```
+
+适合输出：
+- Dashboard / workbench macrostructure
+- 进度卡、趋势图、待处理列表、筛选器、详情抽屉
+- loading / empty / error / rate limited 状态
+- token、响应式和无障碍要求
+
+### Case 2：现有 Landing Page 反 AI 模板改版
+
+```text
+用 google-stitch-hallmark-ui-design 评审这个 landing page 截图。
+目标是降低 AI 模板感，保留当前品牌色、注册入口和价格入口。
+请输出 Stitch critique prompt、P0/P1/P2 改版建议、不要乱改的边界，以及下一版 redesign prompt。
+```
+
+适合检查：
+- 是否是默认 hero → 3 features → CTA → footer
+- 是否有虚假指标、testimonial、logo wall
+- CTA 是否过多、信息层级是否单薄
+- 移动端导航和按钮是否会换行
+
+### Case 3：后台表单 / 设置页高保真
+
+```text
+用 google-stitch-hallmark-ui-design 设计一个团队通知设置页。
+页面包含通知渠道、接收人、频率、静默时段、测试发送入口。
+要求输出 Stitch prompt，并明确 error / disabled / permission denied / test failed 状态。
+不要改变已有业务流程，不要新增没有确认的外部渠道。
+```
+
+适合输出：
+- Settings / long document macrostructure
+- 表单分组、危险操作区、保存栏、权限提示
+- 业务写操作边界和 readback 验收提醒
+
+### Case 4：移动端 App Screen
+
+```text
+用 google-stitch-hallmark-ui-design 设计一个移动端任务详情页。
+用户打开后要立刻看到任务状态、下一步动作、截止时间和失败原因。
+请给 Stitch prompt，要求 320/375/414 px 都不能横向滚动，主 CTA 不换成两行。
+```
+
+适合输出：
+- Mobile-first screen prompt
+- sticky action bar、状态 timeline、错误说明、重试入口
+- 触控尺寸、对比度、焦点态和断点要求
+
+### Case 5：Stitch 输出后复核
+
+```text
+用 google-stitch-hallmark-ui-design 复核这份 Stitch 输出。
+重点检查：假指标、假浏览器框、移动端横滚、token 混乱、状态缺失、过度装饰。
+请给 pass/fail、Top 5 修复项、保留项，以及 design.md 需要重写的部分。
+```
+
+适合输出：
+- Hallmark review summary
+- Top 5 fixes before implementation
+- What to preserve / what to rewrite
+- 前端验收 checklist
+
+### Case 6：从 Stitch 产物转前端任务
+
+```text
+用 google-stitch-hallmark-ui-design 把这份 Stitch 结果整理成 design.md 和 Vue + TypeScript 前端实现任务。
+项目使用 Tailwind 和 pnpm。
+请拆组件、状态、token、响应式规则和浏览器验收 checklist。
+```
+
+适合输出：
+- `design.md`
+- 组件拆分：layout、card、table、filter、drawer、empty state
+- token 映射和禁止 one-off hex
+- Chrome DevTools MCP 验收边界
+
+### Case 7：Stitch MCP / 账号能力不确定
+
+```text
+用 google-stitch-hallmark-ui-design 帮我判断当前能不能直接调用 Stitch。
+如果 MCP resources 为空，请不要说 Stitch 不可用，只说明当前会话没有暴露资源，并给出 prompt-only 降级方案。
+```
+
+适合输出：
+- MCP resources/templates 检查结论
+- prompt-only / browser / MCP 三种路径
+- 真实调用与未调用的边界说明
 
 ## Stitch prompt 写法原则
 

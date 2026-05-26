@@ -49,6 +49,17 @@ cp -R google-stitch-hallmark-ui-design-skill ~/.codex/skills/google-stitch-hallm
 用 google-stitch-hallmark-ui-design 帮我把这个 SaaS dashboard 改成更不像 AI 模板的高保真 UI。
 ```
 
+## 使用前置条件
+
+**不必须先安装或接入 Google Stitch。** 本 skill 可以先以 prompt-only 方式工作：输出可复制到 Stitch 的 screen prompt、critique prompt、design.md 草案和质量检查清单。
+
+| 模式 | 是否需要 Stitch 账号/接入 | 适合场景 |
+|---|---:|---|
+| Prompt-only | 否 | 先整理需求、生成可复制 prompt、团队手动放进 Stitch |
+| Stitch-assisted | 是 | 要真实跑 Stitch、读取 Stitch 输出、或让 agent 通过 MCP/API/浏览器接入 |
+
+如果当前 Codex 会话里 `list_mcp_resources` / `list_mcp_resource_templates` 为空，只能说明**当前会话没有暴露可调用 Stitch 资源**，不能说明 Stitch 产品不可用。此时应降级交付 prompt 和设计规格，并明确“本轮未真实调用 Stitch”。
+
 ## 仓库结构
 
 ```text
@@ -76,6 +87,30 @@ cp -R google-stitch-hallmark-ui-design-skill ~/.codex/skills/google-stitch-hallm
 
 ```text
 用 google-stitch-hallmark-ui-design 检查这份 Stitch 输出是否有 AI slop：假指标、假浏览器框、移动端横滚、token 混乱、状态缺失。
+```
+
+### 4. 移动端 App Screen
+
+```text
+用 google-stitch-hallmark-ui-design 设计一个移动端任务详情页。用户要立刻看到任务状态、下一步动作、截止时间和失败原因。要求 320/375/414 px 不横向滚动，主 CTA 不换成两行。
+```
+
+### 5. 后台设置页 / 表单页
+
+```text
+用 google-stitch-hallmark-ui-design 设计一个团队通知设置页，包含通知渠道、接收人、频率、静默时段和测试发送入口。要求覆盖 error、disabled、permission denied、test failed 状态，不改变已有业务流程。
+```
+
+### 6. Stitch 产物转前端任务
+
+```text
+用 google-stitch-hallmark-ui-design 把这份 Stitch 结果整理成 design.md 和 Vue + TypeScript + Tailwind 前端实现任务，拆组件、状态、token、响应式规则和验收 checklist。
+```
+
+### 7. Stitch 接入能力不确定
+
+```text
+用 google-stitch-hallmark-ui-design 判断当前能不能直接调用 Stitch。如果 MCP resources 为空，不要说 Stitch 不可用，只说明当前会话没暴露资源，并给 prompt-only 降级方案。
 ```
 
 ## 开源边界
