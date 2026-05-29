@@ -1,4 +1,4 @@
 interface:
   display_name: "Google Stitch + Hallmark UI Design"
-  short_description: "用Google Stitch做UI主设计，并用Hallmark反AI-slop规则做质量闸"
-  default_prompt: "Use $google-stitch-hallmark-ui-design to design or critique UI with Google Stitch as the main design path and Hallmark as the anti-AI-slop quality gate."
+  short_description: "用Google Stitch做UI设计/评审/导出交接，并用Hallmark做质量闸"
+  default_prompt: "Use $google-stitch-hallmark-ui-design to design, critique, export, or hand off UI with Google Stitch as the main design path and Hallmark as the anti-AI-slop quality gate."
